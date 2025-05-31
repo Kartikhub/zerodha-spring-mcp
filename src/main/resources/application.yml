@@ -1,0 +1,32 @@
+spring:
+  ai:
+    mcp:
+      server:
+        name: kite-mcp-server
+        version: 1.0.0
+        type: SYNC
+        instructions: "This server provides tools for interacting with Zerodha's Kite API, including authentication and portfolio management"
+        sse-message-endpoint: /mcp/messages
+        sse-endpoint: /mcp/sse
+        # base-url: /api/v1
+        capabilities:
+          tool: true
+          resource: false
+          prompt: false
+          completion: false
+        tool-change-notification: true
+        resource-change-notification: false
+        prompt-change-notification: false
+        request-timeout: 30s
+
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 30m
+
+kite:
+  apiKey: ${KITE_API_KEY}
+  apiSecret: ${KITE_API_SECRET}
+  userId: ${KITE_USER_ID:default}
+  callbackUrl: http://localhost:8080/callback
