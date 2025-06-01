@@ -1,6 +1,6 @@
 # Kite Spring MCP Server
 
-A Java implementation of Zerodha's Kite API as a Model Context Protocol (MCP) server built with Spring Boot. Inspired by the official [Go Kite MCP server](https://github.com/zerodha/kite-mcp-server) project.
+A Java implementation of Zerodha's Kite API as a Model Context Protocol (MCP) server built with Spring Boot. Inspired by the official [Kite MCP server](https://github.com/zerodha/kite-mcp-server) project.
 
 ## Overview
 
@@ -24,8 +24,8 @@ This proof-of-concept implementation provides the following tools:
 ## Technology Stack
 
 - **Spring Boot** (v3.2.0): Main application framework
-- **Spring AI MCP WebMVC**: Implements the Model Context Protocol server capabilities (https://docs.spring.io/spring-ai/reference/api/mcp-server.html)
-- **Zerodha Kite Connect SDK** (v3.5.0): Java client for accessing Zerodha's trading APIs (https://github.com/zerodhatech/javakiteconnect)
+- **Spring AI MCP WebMVC**: Implements the Model Context Protocol server capabilities (https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html)
+- **Zerodha Kite Connect SDK** (v3.5.0): Java client for accessing Zerodha's trading APIs (https://github.com/zerodha/javakiteconnect)
 - **Java 21**: Target JDK version
 
 ## Running the Server
@@ -100,4 +100,4 @@ This implementation is designed to be easily extended with additional Kite API t
 
 This project is released under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-This implementation is inspired by the official [Go Kite MCP server](https://github.com/zerodha/kite-mcp-server) by Zerodha Tech, also available under the MIT License. Attribution information is included in the [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES) file.
+This implementation is inspired by the official [Kite MCP server](https://github.com/zerodha/kite-mcp-server) by Zerodha Tech, also available under the MIT License. Attribution information is included in the [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES) file.
