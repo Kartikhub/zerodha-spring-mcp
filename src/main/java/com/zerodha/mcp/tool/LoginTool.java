@@ -40,11 +40,12 @@ public class LoginTool {
         exchange.loggingNotification(new LoggingMessageNotification(LoggingLevel.INFO, "server", 
             String.format("Generating login URL for Zerodha Kite authentication (session: %s)", clientSessionId)));
 
-        // Include client_session parameter in the login URL
-        String loginUrlWithSession = loginUrl + (loginUrl.contains("?") ? "&" : "?") + "client_session=" + clientSessionId;
-        
+        // Encode the client_session as a redirect parameter
+        String redirectParams = "client_session=" + clientSessionId;
+        String loginUrlWithParams = loginUrl + "&redirect_params=" + java.net.URLEncoder.encode(redirectParams, java.nio.charset.StandardCharsets.UTF_8);
+
         Map<String, String> response = Map.of(
-            "loginUrl", loginUrlWithSession,
+            "loginUrl", loginUrlWithParams,
             "sessionId", clientSessionId,
             "message", "Please open this URL in your browser to login. Once you've logged in successfully, you can proceed with other operations."
         );

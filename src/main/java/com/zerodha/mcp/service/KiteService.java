@@ -74,7 +74,7 @@ public class KiteService {
         log.debug("Fetching Kite holdings for client session: {}", clientSessionId);
         String accessToken = kiteSession.getAccessToken(clientSessionId);
         kiteConnect.setAccessToken(accessToken);
-        return (ArrayList<Holding>) kiteConnect.getHoldings();
+        return new ArrayList<>(kiteConnect.getHoldings());
     }
 
     private void validateSession(String clientSessionId) {

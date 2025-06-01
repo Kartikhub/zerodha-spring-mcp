@@ -20,11 +20,19 @@ public class KiteCallbackController {
     public String handleCallback(
         @RequestParam("request_token") String requestToken,
         @RequestParam("client_session") String clientSessionId,
+        @RequestParam("status") String status,
+        @RequestParam(value = "type", defaultValue = "login") String type,
         RedirectAttributes redirectAttributes
     ) {
         try {
-            log.debug("Received callback with requestToken: {}, clientSessionId: {}", requestToken, clientSessionId);
-            
+            if (!"success".equals(status)) {
+                log.error("Login failed with status: {}", status);
+                return "redirect:/error";
+            }
+
+            log.debug("Received callback with requestToken: {}, clientSessionId: {}, type: {}, status: {}",
+                     requestToken, clientSessionId, type, status);
+
             // Update the session mapping with the request token
             tokenSessionMapping.storeMapping(requestToken, clientSessionId);
             
