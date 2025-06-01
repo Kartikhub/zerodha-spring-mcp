@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ToolConfig {
     
-//    @Bean
-//    public ToolCallbackProvider kiteTools(LoginTool loginTool, HoldingsTool holdingsTool) {
-//        return MethodToolCallbackProvider.builder()
-//            .toolObjects(loginTool, holdingsTool)
-//            .build();
-//    }
+    @Bean
+    public ToolCallbackProvider kiteTools(LoginTool loginTool, HoldingsTool holdingsTool) {
+        return MethodToolCallbackProvider.builder()
+            .toolObjects(loginTool, holdingsTool)
+            .build();
+    }
 }

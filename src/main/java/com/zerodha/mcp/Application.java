@@ -14,14 +14,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @Slf4j
 public class Application {
-    
-    @Bean
+
+ /*   @Bean
     public ToolCallbackProvider kiteTools(LoginTool loginTool, HoldingsTool holdingsTool) {
         log.info("Registering Kite MCP tools");
         return MethodToolCallbackProvider.builder()
                 .toolObjects(loginTool, holdingsTool)
                 .build();
-    }
+    }*/
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
