@@ -1,6 +1,6 @@
-package com.zerodha.mcp.config;
+package io.github.kartikhub.config;
 
-import com.zerodha.mcp.properties.KiteProperties;
+import io.github.kartikhub.properties.KiteProperties;
 
 import com.zerodhatech.kiteconnect.KiteConnect;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

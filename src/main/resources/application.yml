@@ -8,7 +8,6 @@ spring:
         instructions: "This server provides tools for interacting with Zerodha's Kite API, including authentication and portfolio management"
         sse-message-endpoint: /mcp/messages
         sse-endpoint: /mcp/sse
-        # base-url: /api/v1
         capabilities:
           tool: true
           resource: false
