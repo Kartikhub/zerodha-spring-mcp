@@ -1,7 +1,7 @@
 package com.zerodha.mcp.tool;
 
 import com.zerodha.mcp.service.KiteService;
-import com.zerodha.mcp.session.TokenSessionMapping;
+import com.zerodha.mcp.session.KiteSessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LoginTool {
     private final KiteService kiteService;
-    private final TokenSessionMapping tokenSessionMapping;
+    private final KiteSessionManager sessionManager;
 
     @Tool(
         name = "login",
@@ -35,8 +35,8 @@ public class LoginTool {
         String loginUrl = kiteService.getLoginUrl(clientSessionId);
 
         // Store the session mapping (the request token will be stored in callback)
-        tokenSessionMapping.storeMapping(clientSessionId, clientSessionId);
-        
+        sessionManager.storeTokenMapping(clientSessionId, clientSessionId);
+
         exchange.loggingNotification(new LoggingMessageNotification(LoggingLevel.INFO, "server", 
             String.format("Generating login URL for Zerodha Kite authentication (session: %s)", clientSessionId)));
 

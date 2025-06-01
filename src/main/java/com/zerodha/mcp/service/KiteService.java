@@ -1,7 +1,7 @@
 package com.zerodha.mcp.service;
 
 import com.zerodha.mcp.properties.KiteProperties;
-import com.zerodha.mcp.session.KiteSession;
+import com.zerodha.mcp.session.KiteSessionManager;
 import com.zerodha.mcp.exception.SessionNotFoundException;
 
 import com.zerodhatech.kiteconnect.KiteConnect;
@@ -12,12 +12,10 @@ import com.zerodhatech.models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
-
-import io.modelcontextprotocol.server.McpServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -25,11 +23,11 @@ import java.util.ArrayList;
 public class KiteService {
     private final KiteConnect kiteConnect;
     private final KiteProperties kiteProperties;
-    private final KiteSession kiteSession;
+    private final KiteSessionManager sessionManager;
 
     public String getLoginUrl(String clientSessionId) {
         log.info("Generating Kite login URL for client session: {}", clientSessionId);
-        kiteSession.createSession(clientSessionId, null, kiteProperties.getUserId());
+        sessionManager.createSession(clientSessionId, null, kiteProperties.getUserId());
         return kiteConnect.getLoginURL();
     }
 
@@ -43,45 +41,83 @@ public class KiteService {
             kiteConnect.setPublicToken(user.publicToken);
             
             // Update the existing session with the access token
-            kiteSession.createSession(clientSessionId, user.accessToken, user.userId);
-            kiteSession.setAuthenticated(clientSessionId, true);
-            
+            sessionManager.createSession(clientSessionId, user.accessToken, user.userId);
+            sessionManager.setAuthenticated(clientSessionId, true);
+
             log.info("Successfully generated Kite session for user: {} with client session: {}", user.userId, clientSessionId);
         } catch (KiteException e) {
-            log.error("Error generating Kite session - KiteException: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to generate Kite session - KiteException: " + e.getMessage(), e);
+            handleKiteException("generate Kite session", clientSessionId, e);
         } catch (Exception e) {
-            log.error("Error generating Kite session: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to generate Kite session: " + e.getMessage(), e);
+            handleGenericException("generate Kite session", clientSessionId, e);
         }
     }
 
     public Profile getProfile(String clientSessionId) {
-        validateSession(clientSessionId);
-        try {
-            log.debug("Fetching Kite user profile for client session: {}", clientSessionId);
-            String accessToken = kiteSession.getAccessToken(clientSessionId);
-            kiteConnect.setAccessToken(accessToken);
-            return kiteConnect.getProfile();
-        } catch (KiteException | IOException e) {
-            log.error("Error fetching Kite profile: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to fetch Kite profile: " + e.getMessage(), e);
-        }
+        return executeKiteApiCall(clientSessionId, "fetch profile", kc -> {
+            try {
+                return kc.getProfile();
+            } catch (KiteException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public ArrayList<Holding> getHoldings(String clientSessionId) throws KiteException, IOException {
+        return executeKiteApiCall(clientSessionId, "fetch holdings", kc -> {
+            try {
+                return new ArrayList<>(kc.getHoldings());
+            } catch (KiteException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    /**
+     * Helper method to execute authenticated Kite API calls with proper session handling
+     */
+    private <T> T executeKiteApiCall(String clientSessionId, String operation, Function<KiteConnect, T> apiCall) {
         validateSession(clientSessionId);
-        log.debug("Fetching Kite holdings for client session: {}", clientSessionId);
-        String accessToken = kiteSession.getAccessToken(clientSessionId);
-        kiteConnect.setAccessToken(accessToken);
-        return new ArrayList<>(kiteConnect.getHoldings());
+        try {
+            log.debug("Performing Kite API operation '{}' for client session: {}", operation, clientSessionId);
+            String accessToken = sessionManager.getAccessToken(clientSessionId);
+            kiteConnect.setAccessToken(accessToken);
+            return apiCall.apply(kiteConnect);
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof KiteException) {
+                handleKiteException(operation, clientSessionId, (KiteException) e.getCause());
+            } else if (e.getCause() instanceof IOException) {
+                handleIOException(operation, clientSessionId, (IOException) e.getCause());
+            }
+            handleGenericException(operation, clientSessionId, e);
+            throw e; // This line won't be reached, but keeps the compiler happy
+        }
     }
 
     private void validateSession(String clientSessionId) {
-        if (!kiteSession.isAuthenticated(clientSessionId)) {
+        if (!sessionManager.isAuthenticated(clientSessionId)) {
             String error = "Not authenticated with Kite. Please login first.";
             log.error("Session validation failed for client session {}: {}", clientSessionId, error);
             throw new SessionNotFoundException(error);
         }
     }
+
+    private void handleKiteException(String operation, String clientSessionId, KiteException e) {
+        String error = String.format("Failed to %s - KiteException (code: %d): %s", operation, e.code, e.getMessage());
+        log.error("Error for session {}: {}", clientSessionId, error, e);
+        throw new RuntimeException(error, e);
+    }
+
+    private void handleIOException(String operation, String clientSessionId, IOException e) {
+        String error = String.format("Network error while trying to %s: %s", operation, e.getMessage());
+        log.error("Error for session {}: {}", clientSessionId, error, e);
+        throw new RuntimeException(error, e);
+    }
+
+    private void handleGenericException(String operation, String clientSessionId, Exception e) {
+        String error = String.format("Failed to %s: %s", operation, e.getMessage());
+        log.error("Error for session {}: {}", clientSessionId, error, e);
+        throw new RuntimeException(error, e);
+    }
 }
+
+

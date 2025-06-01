@@ -1,7 +1,7 @@
 package com.zerodha.mcp.controller;
 
 import com.zerodha.mcp.service.KiteService;
-import com.zerodha.mcp.session.TokenSessionMapping;
+import com.zerodha.mcp.session.KiteSessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class KiteCallbackController {
     private final KiteService kiteService;
-    private final TokenSessionMapping tokenSessionMapping;
+    private final KiteSessionManager sessionManager;
 
     @GetMapping("/callback")
     public String handleCallback(
@@ -34,8 +34,8 @@ public class KiteCallbackController {
                      requestToken, clientSessionId, type, status);
 
             // Update the session mapping with the request token
-            tokenSessionMapping.storeMapping(requestToken, clientSessionId);
-            
+            sessionManager.storeTokenMapping(requestToken, clientSessionId);
+
             // Generate the session
             kiteService.generateSession(clientSessionId, requestToken);
             

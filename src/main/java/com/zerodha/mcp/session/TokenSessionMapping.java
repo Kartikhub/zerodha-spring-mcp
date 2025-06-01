@@ -4,24 +4,20 @@ import com.zerodha.mcp.exception.SessionNotFoundException;
 import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.time.Instant;
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @deprecated This class is being replaced by {@link KiteSessionManager} which consolidates
+ * session and token management functionality. Use KiteSessionManager instead.
+ */
+@Deprecated(forRemoval = true)
 @Slf4j
 @Component
 public class TokenSessionMapping {
     private final Map<String, SessionInfo> tokenToSessionMap = new ConcurrentHashMap<>();
     private static final Duration TOKEN_EXPIRY = Duration.ofMinutes(5); // Tokens expire after 5 minutes
-    private final ScheduledExecutorService cleanupExecutor;
-
-    public TokenSessionMapping() {
-        cleanupExecutor = Executors.newSingleThreadScheduledExecutor();
-        cleanupExecutor.scheduleAtFixedRate(this::cleanupExpiredTokens, 1, 1, TimeUnit.MINUTES);
-    }
 
     public static class SessionInfo {
         private final String clientSessionId;
@@ -57,6 +53,11 @@ public class TokenSessionMapping {
     }
 
     public void validateSession(String clientSessionId) {
+        if (clientSessionId == null || clientSessionId.isEmpty()) {
+            log.error("Session ID cannot be null or empty");
+            throw new SessionNotFoundException("Session ID is missing. Please login again.");
+        }
+
         boolean hasValidSession = tokenToSessionMap.values().stream()
             .anyMatch(info -> !info.isExpired() && clientSessionId.equals(info.getClientSessionId()));
         
@@ -66,7 +67,10 @@ public class TokenSessionMapping {
         }
     }
 
-    private void cleanupExpiredTokens() {
+    public void cleanupExpiredTokens() {
+        log.info("Token cleanup job - this method is deprecated, use KiteSessionManager instead");
+        int beforeSize = tokenToSessionMap.size();
+
         tokenToSessionMap.entrySet().removeIf(entry -> {
             boolean expired = entry.getValue().isExpired();
             if (expired) {
@@ -74,5 +78,11 @@ public class TokenSessionMapping {
             }
             return expired;
         });
+
+        int removedCount = beforeSize - tokenToSessionMap.size();
+        if (removedCount > 0) {
+            log.info("Token cleanup complete. Removed {} expired tokens. {} active tokens remaining.",
+                     removedCount, tokenToSessionMap.size());
+        }
     }
 }

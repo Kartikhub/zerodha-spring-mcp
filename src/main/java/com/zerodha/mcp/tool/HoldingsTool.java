@@ -2,7 +2,7 @@ package com.zerodha.mcp.tool;
 
 import com.zerodha.mcp.service.KiteService;
 import com.zerodha.mcp.exception.SessionNotFoundException;
-import com.zerodha.mcp.session.TokenSessionMapping;
+import com.zerodha.mcp.session.KiteSessionManager;
 import com.zerodhatech.kiteconnect.kitehttp.exceptions.KiteException;
 import com.zerodhatech.models.Holding;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -22,7 +22,9 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class HoldingsTool {
     private final KiteService kiteService;
-    private final TokenSessionMapping tokenSessionMapping;@Tool(
+    private final KiteSessionManager sessionManager;
+
+    @Tool(
         name = "get_holdings",
         description = "Get the current user's portfolio holdings from Zerodha Kite. " +
                      "Returns a list of holdings with details like trading symbol, quantity, average price, " +
@@ -35,10 +37,9 @@ public class HoldingsTool {
         
         log.debug("MCP Tool: Fetching holdings for client session: {}", clientSessionId);
         exchange.loggingNotification(new LoggingMessageNotification(LoggingLevel.INFO, "server", 
-            String.format("Fetching portfolio holdings for session: %s", clientSessionId)));        try {
-            // Validate session before making the request
-            tokenSessionMapping.validateSession(clientSessionId);
-            
+            String.format("Fetching portfolio holdings for session: %s", clientSessionId)));
+
+        try {
             ArrayList<Holding> holdings = kiteService.getHoldings(clientSessionId);
             String message = String.format("Successfully retrieved %d holdings for session: %s", holdings.size(), clientSessionId);
             exchange.loggingNotification(new LoggingMessageNotification(LoggingLevel.INFO, "server", message));
