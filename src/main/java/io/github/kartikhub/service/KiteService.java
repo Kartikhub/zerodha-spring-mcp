@@ -1,13 +1,12 @@
-package com.zerodha.mcp.service;
+package io.github.kartikhub.service;
 
-import com.zerodha.mcp.properties.KiteProperties;
-import com.zerodha.mcp.session.KiteSessionManager;
-import com.zerodha.mcp.exception.SessionNotFoundException;
+import io.github.kartikhub.properties.KiteProperties;
+import io.github.kartikhub.session.KiteSessionManager;
+import io.github.kartikhub.exception.SessionNotFoundException;
 
 import com.zerodhatech.kiteconnect.KiteConnect;
 import com.zerodhatech.kiteconnect.kitehttp.exceptions.KiteException;
 import com.zerodhatech.models.Holding;
-import com.zerodhatech.models.Profile;
 import com.zerodhatech.models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,15 +51,6 @@ public class KiteService {
         }
     }
 
-    public Profile getProfile(String clientSessionId) {
-        return executeKiteApiCall(clientSessionId, "fetch profile", kc -> {
-            try {
-                return kc.getProfile();
-            } catch (KiteException | IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
 
     public ArrayList<Holding> getHoldings(String clientSessionId) throws KiteException, IOException {
         return executeKiteApiCall(clientSessionId, "fetch holdings", kc -> {

@@ -1,13 +1,12 @@
-package com.zerodha.mcp.controller;
+package io.github.kartikhub.controller;
 
-import com.zerodha.mcp.service.KiteService;
-import com.zerodha.mcp.session.KiteSessionManager;
+import io.github.kartikhub.service.KiteService;
+import io.github.kartikhub.session.KiteSessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -21,13 +20,12 @@ public class KiteCallbackController {
         @RequestParam("request_token") String requestToken,
         @RequestParam("client_session") String clientSessionId,
         @RequestParam("status") String status,
-        @RequestParam(value = "type", defaultValue = "login") String type,
-        RedirectAttributes redirectAttributes
+        @RequestParam(value = "type", defaultValue = "login") String type
     ) {
         try {
             if (!"success".equals(status)) {
                 log.error("Login failed with status: {}", status);
-                return "redirect:/error";
+                return "redirect:/error.html";
             }
 
             log.debug("Received callback with requestToken: {}, clientSessionId: {}, type: {}, status: {}",
@@ -42,7 +40,6 @@ public class KiteCallbackController {
             return "redirect:/success.html";
         } catch (Exception e) {
             log.error("Error in callback: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("error", "Failed to authenticate: " + e.getMessage());
             return "redirect:/error.html";
         }
     }

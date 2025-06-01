@@ -1,4 +1,4 @@
-package com.zerodha.mcp;
+package io.github.kartikhub;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

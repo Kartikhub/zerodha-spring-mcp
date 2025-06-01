@@ -1,7 +1,7 @@
-package com.zerodha.mcp.tool;
+package io.github.kartikhub.tool;
 
-import com.zerodha.mcp.service.KiteService;
-import com.zerodha.mcp.session.KiteSessionManager;
+import io.github.kartikhub.service.KiteService;
+import io.github.kartikhub.session.KiteSessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import io.modelcontextprotocol.server.McpSyncServerExchange;

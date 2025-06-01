@@ -1,7 +1,7 @@
-package com.zerodha.mcp.config;
+package io.github.kartikhub.config;
 
-import com.zerodha.mcp.tool.HoldingsTool;
-import com.zerodha.mcp.tool.LoginTool;
+import io.github.kartikhub.tool.HoldingsTool;
+import io.github.kartikhub.tool.LoginTool;
 
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;

@@ -9,7 +9,7 @@
         <version>3.2.0</version>
     </parent>
 
-    <groupId>com.zerodha.mcp</groupId>
+    <groupId>io.github.kartikhub</groupId>
     <artifactId>kite-spring-mcp</artifactId>
     <version>1.0-SNAPSHOT</version>
 

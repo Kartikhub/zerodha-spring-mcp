@@ -1,4 +1,4 @@
-package com.zerodha.mcp.exception;
+package io.github.kartikhub.exception;
 
 public class SessionNotFoundException extends RuntimeException {
     public SessionNotFoundException(String message) {

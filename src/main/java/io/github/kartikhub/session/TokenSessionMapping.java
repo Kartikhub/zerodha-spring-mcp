@@ -1,6 +1,6 @@
-package com.zerodha.mcp.session;
+package io.github.kartikhub.session;
 
-import com.zerodha.mcp.exception.SessionNotFoundException;
+import io.github.kartikhub.exception.SessionNotFoundException;
 import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,8 +1,8 @@
-package com.zerodha.mcp.tool;
+package io.github.kartikhub.tool;
 
-import com.zerodha.mcp.service.KiteService;
-import com.zerodha.mcp.exception.SessionNotFoundException;
-import com.zerodha.mcp.session.KiteSessionManager;
+import io.github.kartikhub.service.KiteService;
+import io.github.kartikhub.exception.SessionNotFoundException;
+import io.github.kartikhub.session.KiteSessionManager;
 import com.zerodhatech.kiteconnect.kitehttp.exceptions.KiteException;
 import com.zerodhatech.models.Holding;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
